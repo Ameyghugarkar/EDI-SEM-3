@@ -5,7 +5,6 @@ const path = require("path");
 const {v4:uuidv4} = require('uuid');
 
 
-
 app.use(express.urlencoded({extended: true}));
 
 
@@ -30,7 +29,7 @@ app.get("/login", (req,res) => {
     res.render("login.ejs", {user});
 });
 
-app.get("/login/name/admin", (req,res) => {
+app.get("/admin", (req,res) => {
     let {name} = req.params;
     res.render("admin.ejs", {name});
 });
