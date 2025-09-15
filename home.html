@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industrial Violation Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #3498db;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #2ecc71;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark);
+        }
+        
+        .navbar {
+            background-color: var(--primary);
+            padding: 15px 0;
+        }
+        
+        .navbar-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8)), url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1500&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .features-section {
+            padding: 80px 0;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 8px;
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        
+        .login-cards {
+            padding: 80px 0;
+            background-color: var(--light);
+        }
+        
+        .login-card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        
+        .login-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .login-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .admin-card .login-header {
+            background-color: var(--danger);
+        }
+        
+        .manager-card .login-header {
+            background-color: var(--warning);
+        }
+        
+        .employee-card .login-header {
+            background-color: var(--success);
+        }
+        
+        .login-card-body {
+            padding: 30px;
+            background-color: white;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            font-weight: 600;
+        }
+        
+        .admin-btn {
+            background-color: var(--danger);
+            border-color: var(--danger);
+        }
+        
+        .manager-btn {
+            background-color: var(--warning);
+            border-color: var(--warning);
+        }
+        
+        .employee-btn {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 40px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-hard-hat me-2"></i>IVMS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#login-cards">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h1 class="display-4 fw-bold mb-4">Industrial Violation Management System</h1>
+                    <p class="lead mb-4">A comprehensive solution for monitoring, managing, and reducing workplace violations to ensure a safer industrial environment.</p>
+                    <a href="#login-cards" class="btn btn-primary btn-lg px-4 py-2">Get Started <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Key Features</h2>
+                <p class="lead text-muted">Our system provides comprehensive tools for all stakeholders</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card shadow-sm">
+                        <div class="feature-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h4>Violation Tracking</h4>
+                        <p class="text-muted">Monitor and record safety violations in real-time with image evidence and location data.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card shadow-sm">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>Analytics & Reporting</h4>
+                        <p class="text-muted">Gain insights with detailed dashboards, heat maps, and violation trend analysis.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card shadow-sm">
+                        <div class="feature-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h4>Instant Alerts</h4>
+                        <p class="text-muted">Managers receive immediate notifications when violations are detected in their areas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Cards Section -->
+    <section class="login-cards" id="login-cards">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Login to Your Account</h2>
+                <p class="lead text-muted">Select your role to access the system</p>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Admin Login Card -->
+                <div class="col-md-4">
+                    <div class="login-card admin-card shadow">
+                        <div class="login-header">
+                            <i class="fas fa-user-cog fa-3x mb-3"></i>
+                            <h3>Administrator</h3>
+                        </div>
+                        <div class="login-card-body">
+                            <p>Access comprehensive analytics, system settings, and overall violation management.</p>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item">View system-wide dashboards</li>
+                                <li class="list-group-item">Manage users and permissions</li>
+                                <li class="list-group-item">Generate detailed reports</li>
+                            </ul>
+                            <button class="btn btn-login admin-btn text-white" data-bs-toggle="modal" data-bs-target="#loginModal" data-role="admin">
+                                Login as Admin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Manager Login Card -->
+                <div class="col-md-4">
+                    <div class="login-card manager-card shadow">
+                        <div class="login-header">
+                            <i class="fas fa-user-tie fa-3x mb-3"></i>
+                            <h3>Manager</h3>
+                        </div>
+                        <div class="login-card-body">
+                            <p>Receive violation alerts, assign them to employees, and monitor team performance.</p>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item">Receive violation alerts</li>
+                                <li class="list-group-item">Assign violations to employees</li>
+                                <li class="list-group-item">Track team performance</li>
+                            </ul>
+                            <button class="btn btn-login manager-btn text-white" data-bs-toggle="modal" data-bs-target="#loginModal" data-role="manager">
+                                Login as Manager
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Employee Login Card -->
+                <div class="col-md-4">
+                    <div class="login-card employee-card shadow">
+                        <div class="login-header">
+                            <i class="fas fa-user-hard-hat fa-3x mb-3"></i>
+                            <h3>Employee</h3>
+                        </div>
+                        <div class="login-card-body">
+                            <p>View your violation history, track your safety record, and improve workplace safety.</p>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item">View personal violation history</li>
+                                <li class="list-group-item">Track safety performance</li>
+                                <li class="list-group-item">Access educational resources</li>
+                            </ul>
+                            <button class="btn btn-login employee-btn text-white" data-bs-toggle="modal" data-bs-target="#loginModal" data-role="employee">
+                                Login as Employee
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Industrial Violation Management System</h5>
+                    <p>A comprehensive solution for maintaining workplace safety and compliance through effective violation tracking and management.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Home</a></li>
+                        <li><a href="#" class="text-white">About</a></li>
+                        <li><a href="#" class="text-white">Features</a></li>
+                        <li><a href="#" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Safety Drive, Industrial Park</li>
+                        <li><i class="fas fa-phone me-2"></i> (555) 123-4567</li>
+                        <li><i class="fas fa-envelope me-2"></i> info@ivms.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Follow Us</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center pt-3">
+                <p>&copy; 2023 Industrial Violation Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalTitle">Login to IVMS</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" id="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Login as</label>
+                            <select class="form-select" name="role" id="role">
+                                <option value="employee">Employee</option>
+                                <option value="manager">Manager</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember">
+                            <label class="form-check-label" for="remember">Remember me</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <p class="small me-auto">Don't have an account? <a href="#">Contact administrator</a></p>
+                    <a href="#" class="small">Forgot password?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set the role in the login modal based on which card was clicked
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginModal = document.getElementById('loginModal');
+            const roleSelect = document.getElementById('role');
+            
+            loginModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const role = button.getAttribute('data-role');
+                roleSelect.value = role;
+                
+                // Update modal title based on role
+                document.getElementById('loginModalTitle').textContent = `Login as ${role.charAt(0).toUpperCase() + role.slice(1)}`;
+            });
+            
+            // Simple form validation
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const role = document.getElementById('role').value;
+                
+                if (username && password) {
+                    alert(`Logging in as ${role} with username: ${username}`);
+                    // In a real application, you would make an API call to authenticate
+                    // For now, we'll just close the modal
+                    const modal = bootstrap.Modal.getInstance(loginModal);
+                    modal.hide();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
