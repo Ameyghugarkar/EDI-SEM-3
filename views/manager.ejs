@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard - Industrial Violation Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #3498db;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #2ecc71;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            background-color: var(--primary);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding-top: 60px;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            margin: 4px 0;
+            border-radius: 4px;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            padding-top: 80px;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: calc(100% - 250px);
+            margin-left: 250px;
+            z-index: 1000;
+        }
+        
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stats-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+        
+        .stats-card h2 {
+            font-size: 2.5rem;
+            margin: 10px 0;
+            color: var(--dark);
+        }
+        
+        .stats-card p {
+            color: #7f8c8d;
+            margin: 0;
+        }
+        
+        .violation-item {
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: white;
+            border-radius: 4px;
+        }
+        
+        .user-type-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .violation-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" style="width: 250px;">
+        <div class="d-flex justify-content-center align-items-center mb-4">
+            <img src="https://via.placeholder.com/40" alt="Logo" class="me-2">
+            <h4 class="m-0">IVMS</h4>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#dashboard" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#violations" data-tab="violations">
+                    <i class="fas fa-exclamation-triangle"></i> Violations
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#reports" data-tab="reports">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#employees" data-tab="employees">
+                    <i class="fas fa-users"></i> Employees
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="d-flex align-items-center">
+                <span class="me-3" id="current-date"></span>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i> <span id="current-user">Manager User</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="logout-btn"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- User Type Badge -->
+        <span class="badge user-type-badge bg-secondary" id="user-type-badge">Manager</span>
+        
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab" class="tab-content active">
+            <h2 class="mb-4">Manager Dashboard</h2>
+            
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2 id="pending-violations">24</h2>
+                        <p>Pending Violations</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <i class="fas fa-users"></i>
+                        <h2 id="employees-monitored">18</h2>
+                        <p>Employees Monitored</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <i class="fas fa-check-circle"></i>
+                        <h2 id="resolved-cases">142</h2>
+                        <p>Resolved Cases</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h2 id="high-risk-areas">7</h2>
+                        <p>High Risk Areas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Recent Violation Alerts
+                        </div>
+                        <div class="card-body" id="recent-violations">
+                            <div class="violation-item">
+                                <div class="d-flex justify-content-between">
+                                    <h5>Safety Violation Detected</h5>
+                                    <span class="badge bg-danger">New</span>
+                                </div>
+                                <p>Employee: John Smith</p>
+                                <p>Area: Warehouse A</p>
+                                <p>Time: Today, 9:42 AM</p>
+                                <img src="https://via.placeholder.com/400x200" class="violation-image" alt="Violation image">
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-primary">Assign to Employee</button>
+                                    <button class="btn btn-sm btn-secondary">Dismiss</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Quick Actions
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary mb-2">
+                                    <i class="fas fa-plus me-2"></i> Add New Violation
+                                </button>
+                                <button class="btn btn-outline-secondary mb-2">
+                                    <i class="fas fa-user me-2"></i> Manage Employees
+                                </button>
+                                <button class="btn btn-outline-info mb-2">
+                                    <i class="fas fa-map me-2"></i> View Heat Map
+                                </button>
+                                <button class="btn btn-outline-warning mb-2">
+                                    <i class="fas fa-file-export me-2"></i> Generate Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Violations Tab -->
+        <div id="violations-tab" class="tab-content">
+            <h2 class="mb-4">Violations</h2>
+            <!-- Content for violations tab would be rendered here -->
+        </div>
+        
+        <!-- Reports Tab -->
+        <div id="reports-tab" class="tab-content">
+            <h2 class="mb-4">Reports</h2>
+            <!-- Content for reports tab would be rendered here -->
+        </div>
+        
+        <!-- Employees Tab -->
+        <div id="employees-tab" class="tab-content">
+            <h2 class="mb-4">Employees</h2>
+            <!-- Content for employees tab would be rendered here -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check if user is logged in
+        const username = sessionStorage.getItem('username');
+        const role = sessionStorage.getItem('role');
+        
+        if (!username || role !== 'manager') {
+            window.location.href = 'http://localhost:8080/login';
+        }
+        
+        // Set user info
+        document.getElementById('current-user').textContent = username;
+        document.getElementById('user-type-badge').textContent = 'Manager';
+        
+        // Current date display
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+        
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            sessionStorage.clear();
+            window.location.href = 'http://localhost:8080/login';
+        });
+        
+        // Tab navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Hide all tab content
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                
+                // Show the selected tab content
+                const tabId = this.getAttribute('data-tab') + '-tab';
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
