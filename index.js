@@ -22,7 +22,9 @@ let user = [
     },
 ];
 
-
+app.get("/home", (req,res) => {
+    res.render("home.ejs",);
+});
 
 
 app.get("/login", (req,res) => {
