@@ -1,31 +1,64 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const violationsSchema = new Schema({
-    title: {
-        type:String,
+const violationSchema = new Schema({
+    employee: {
+        type: String,
         required: true,
+        trim: true,
     },
-    description: String,
-    image: {
+    category: {
+        type: String,
+        required: true,
+        trim: true,
+        enum: ["safety", "ppe", "procedure", "security"], // matches your select options
+    },
+    location: {
+        type: String,
+        required: true,
+        trim: true,
+        enum: [
+            "warehouse-a",
+            "warehouse-b",
+            "production-line-1",
+            "production-line-2",
+            "loading-dock",
+            "office-area"
+        ],
+    },
+    description: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    correctiveAction: {
+        type: String,
+        trim: true,
+    },
+    evidence: {
         filename: {
             type: String,
-            default: "listingimage"
+            default: "no-file",
         },
         url: {
             type: String,
-            default: "https://plus.unsplash.com/premium_photo-1699740482412-555da1bf94ad?q=80&w=1828&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            set: (v) => v === ""? "https://plus.unsplash.com/premium_photo-1699740482412-555da1bf94ad?q=80&w=1828&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D": v,
-        }
+            default: "https://via.placeholder.com/300x200?text=No+Evidence",
+            set: (v) =>
+                v === ""
+                    ? "https://via.placeholder.com/300x200?text=No+Evidence"
+                    : v,
+        },
+        fileType: {
+            type: String, // 'image' or 'video'
+            enum: ["image", "video", "unknown"],
+            default: "unknown",
+        },
     },
-    description: String,
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
-// violationsSchemaSchema.post("findOneAndDelete", async (violation) => {
-//     if(violation){
-//         await Review.deleteMany({_id: {$in: listing.reviews}});
-//     }
-// });
-
-const Violation = mongoose.model("Violation", violationsSchema);
+const Violation = mongoose.model("Violation", violationSchema);
 module.exports = Violation;
