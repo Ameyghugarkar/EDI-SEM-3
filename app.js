@@ -6,6 +6,9 @@ const {v4:uuidv4} = require('uuid');
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const {ViolationSchema} = require("./schema.js");
+// const ExpressError = require("../utils/ExpressError.js");
+const Violation = require("./models/violations.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/edi";
 
@@ -70,14 +73,14 @@ app.get("/new", (req,res) => {
     res.render("violations/new.ejs");
 });
 
-// app.post("/new", async (req,res,next) => {
-    
-//     const newListing =  new Listing(req.body.listing);
-//     await newListing.save();
-//     req.flash("success", "New Listing Created!");
-//     res.redirect("/manager");
-//     }
-// );
+app.post("/new", async (req,res,next) => {
+    console.log("req.body:", req.body);
+    // const newViolation =  new Violation(req.body.Violation);
+    // await newViolation.save();
+    // req.flash("success", "New Violation Created!");
+    res.redirect("/manager");
+    }
+);
 
 app.listen(port, () =>{
     console.log("Listening on port : 8080");

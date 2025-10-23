@@ -291,7 +291,7 @@
             <div class="form-container">
                 <h2 class="form-title">Violation Details</h2>
                 
-                <form id="violation-form" action="/manager" method="post">
+                <form id="violation-form" action="/new" method="post">
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
@@ -410,30 +410,7 @@
             }
         }
         
-        // Form submission
-        document.getElementById('violation-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Basic validation
-            const employee = document.getElementById('employee').value;
-            const violationType = document.getElementById('violation-type').value;
-            const location = document.getElementById('location').value;
-            const severity = document.getElementById('severity').value;
-            const description = document.getElementById('description').value;
-            const dateTime = document.getElementById('date-time').value;
-            
-            if (!employee || !violationType || !location || !severity || !description || !dateTime) {
-                alert('Please fill in all required fields.');
-                return;
-            }
-            
-            // In a real application, you would send the data to a server here
-            alert('Violation submitted successfully!');
-            
-            // Reset form
-            this.reset();
-            fileName.textContent = '';
-        });
+       
     </script>
 </body>
 </html>
