@@ -9,6 +9,11 @@ const ejsMate = require("ejs-mate");
 const {ViolationSchema} = require("./schema.js");
 // const ExpressError = require("../utils/ExpressError.js");
 const Violation = require("./models/violations.js");
+const multer = require("multer");
+const upload = multer({
+  dest: path.join(__dirname, 'uploads/'),
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+});
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/edi";
 
@@ -31,8 +36,6 @@ app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
 
-
-app.use(express.static(path.join(__dirname, "public")));
 
 let user = [
     {
@@ -73,10 +76,17 @@ app.get("/new", (req,res) => {
     res.render("violations/new.ejs");
 });
 
-app.post("/new", async (req,res,next) => {
-    console.log("req.body:", req.body);
-    // const newViolation =  new Violation(req.body.Violation);
-    // await newViolation.save();
+app.post("/manager",upload.single('evidence'), async (req,res,next) => {
+    const newViolation = new Violation({
+      employee: req.body.employee,
+      category: req.body.category,
+      location: req.body.location,
+      description: req.body.description,
+      correctiveAction: req.body.correctiveAction,
+      evidencePath: req.file ? req.file.path : undefined,
+      // add any other schema fields here...
+    });
+    await newViolation.save();
     // req.flash("success", "New Violation Created!");
     res.redirect("/manager");
     }

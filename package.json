@@ -16,6 +16,7 @@
     "joi": "^18.0.1",
     "method-override": "^3.0.0",
     "mongoose": "^8.19.2",
+    "multer": "^2.0.2",
     "uuidv4": "^6.2.13"
   }
 }
