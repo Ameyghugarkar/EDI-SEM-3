@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - SafetyWatch</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <i class="fas fa-hard-hat"></i>
+        <span>SafetyWatch</span>
+      </div>
+      <ul class="navbar-nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Login Section -->
+  <section class="login-section">
+    <div class="container">
+      <h2 class="section-title">🔐 Select Your Role</h2>
+      <div class="login-grid">
+        <!-- Employee Login -->
+        <div class="login-card employee">
+          <div class="login-icon">
+            <i class="fas fa-user-hard-hat"></i>
+          </div>
+          <h2>Employee</h2>
+          <p>View your safety violations and acknowledge them</p>
+          <button class="btn btn-primary" onclick="showLoginForm('employee')">
+            <i class="fas fa-sign-in-alt"></i> Employee Login
+          </button>
+        </div>
+
+        <!-- Manager Login -->
+        <div class="login-card manager">
+          <div class="login-icon">
+            <i class="fas fa-user-tie"></i>
+          </div>
+          <h2>Manager</h2>
+          <p>Record violations and manage employee safety</p>
+          <button class="btn btn-success" onclick="showLoginForm('manager')">
+            <i class="fas fa-sign-in-alt"></i> Manager Login
+          </button>
+        </div>
+
+        <!-- Admin Login -->
+        <div class="login-card admin">
+          <div class="login-icon">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <h2>Administrator</h2>
+          <p>View analytics and manage the entire system</p>
+          <button class="btn btn-danger" onclick="showLoginForm('admin')">
+            <i class="fas fa-sign-in-alt"></i> Admin Login
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Login</h2>
+        <span class="close" onclick="closeLoginModal()">&times;</span>
+      </div>
+      <div id="alertContainer"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required placeholder="Enter your password">
+        </div>
+        <input type="hidden" id="roleInput" name="role">
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+      </form>
+      <p class="text-center mt-2">
+        Don't have an account? <a href="/signup"
+          style="color: var(--primary-color); font-weight: bold; text-decoration: none;">Sign Up Here</a>
+      </p>
+      <p class="mt-1 text-center"
+        style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); padding: 1rem; border-radius: 12px; border-left: 4px solid var(--primary-color);">
+        <strong>🎯 Demo Credentials:</strong><br>
+        <small style="display: block; margin-top: 0.5rem;">
+          <strong>Employee:</strong> employee@demo.com / password<br>
+          <strong>Manager:</strong> manager@demo.com / password<br>
+          <strong>Admin:</strong> admin@demo.com / password
+        </small>
+      </p>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script>
+    let selectedRole = '';
+
+    function showLoginForm(role) {
+      selectedRole = role;
+      const roleNames = {
+        'employee': 'Employee',
+        'manager': 'Manager',
+        'admin': 'Administrator'
+      };
+      document.getElementById('modalTitle').innerHTML = `<i class="fas fa-sign-in-alt"></i> ${roleNames[role]} Login`;
+      document.getElementById('roleInput').value = role;
+      document.getElementById('loginModal').classList.add('active');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('loginModal').classList.remove('active');
+      document.getElementById('loginForm').reset();
+      document.getElementById('alertContainer').innerHTML = '';
+    }
+
+    // Close modal on outside click
+    window.onclick = function (event) {
+      const modal = document.getElementById('loginModal');
+      if (event.target == modal) {
+        closeLoginModal();
+      }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('roleInput').value;
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password, role })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Show success message
+          showAlert('Login successful! Redirecting...', 'success');
+
+          // Redirect based on role after a short delay
+          setTimeout(() => {
+            switch (data.user.role) {
+              case 'employee':
+                window.location.href = '/employee-dashboard';
+                break;
+              case 'manager':
+                window.location.href = '/manager-dashboard';
+                break;
+              case 'admin':
+                window.location.href = '/admin-dashboard';
+                break;
+            }
+          }, 1000);
+        } else {
+          showAlert(data.message || 'Login failed. Please check your credentials.', 'error');
+        }
+      } catch (error) {
+        showAlert('Login failed. Please try again.', 'error');
+      }
+    });
+
+    function showAlert(message, type) {
+      const alertContainer = document.getElementById('alertContainer');
+      alertContainer.innerHTML = `
+        <div class="alert alert-${type}">
+          <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+          ${message}
+        </div>
+      `;
+    }
+  </script>
+</body>
+
+</html>

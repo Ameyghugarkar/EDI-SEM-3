@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Dashboard - SafetyWatch</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .info-card {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--card-border);
+      transition: var(--transition-base);
+    }
+
+    .info-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-color);
+    }
+
+    .info-card h4 {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-card p {
+      color: var(--text-color);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <i class="fas fa-hard-hat"></i>
+        <span>SafetyWatch</span>
+      </div>
+      <ul class="navbar-nav">
+        <li>
+          <button id="themeToggle" class="theme-toggle" title="Toggle Theme">
+            <i class="fas fa-moon"></i>
+          </button>
+        </li>
+        <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <h1>Employee Dashboard</h1>
+      <div class="user-info">
+        <i class="fas fa-user-hard-hat" style="font-size: 2rem; color: var(--primary-color);"></i>
+        <div>
+          <strong id="userName">Loading...</strong>
+          <p style="margin: 0; font-size: 0.9rem;" id="userEmail"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Safety Score Section -->
+    <div class="stats-grid">
+      <div class="stat-card primary" style="grid-column: span 2;">
+        <div class="stat-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="safetyScore">0</h3>
+          <p>Your Safety Score</p>
+          <div style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+            <i class="fas fa-info-circle"></i> Keep it above 90 for rewards! 🏆
+          </div>
+        </div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="totalViolations">0</h3>
+          <p>Total Violations</p>
+        </div>
+      </div>
+      <div class="stat-card danger">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="pendingViolations">0</h3>
+          <p>Pending Actions</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal Info Grid -->
+    <div class="info-grid">
+      <div class="info-card">
+        <h4><i class="fas fa-calendar"></i> Days Since Last Violation</h4>
+        <p id="daysSinceViolation">-</p>
+      </div>
+      <div class="info-card">
+        <h4><i class="fas fa-fire"></i> Violation-Free Streak</h4>
+        <p id="violationFreeStreak">0 days</p>
+      </div>
+      <div class="info-card">
+        <h4><i class="fas fa-building"></i> Department</h4>
+        <p id="employeeDepartment">-</p>
+      </div>
+      <div class="info-card">
+        <h4><i class="fas fa-briefcase"></i> Position</h4>
+        <p id="employeePosition">-</p>
+      </div>
+    </div>
+
+    <!-- Violations Table -->
+    <div class="table-container">
+      <div class="table-header">
+        <h2>My Safety Violations</h2>
+      </div>
+      <div style="overflow-x: auto;">
+        <table id="violationsTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Violation Type</th>
+              <th>Location</th>
+              <th>Severity</th>
+              <th>Status</th>
+              <th>Recorded By</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="violationsTableBody">
+            <tr>
+              <td colspan="7" class="text-center">
+                <div class="spinner"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/employee.js"></script>
+</body>
+
+</html>

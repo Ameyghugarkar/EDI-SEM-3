@@ -1,0 +1,19 @@
+
+=== TWILIO SMS TEST ===
+
+Credentials:
+  SID: AC7222c406c7e3204af4af29c6e427c0a0
+  Token: Set (hidden)
+  From: +13412301688
+✅ MongoDB Connected
+
+Manager:
+  Name: manager
+  Phone: +919975689622
+
+Sending SMS...
+
+✅ SUCCESS!
+  Message SID: SMaaae632767684d974ab7bd998e4ccf2d
+  Status: queued
+  To: +919975689622

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blueprint Editor - SafetyWatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/blueprint.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <i class="fas fa-hard-hat"></i>
+                <span>SafetyWatch</span>
+            </div>
+            <ul class="navbar-nav">
+                <li><a href="/admin-dashboard"><i class="fas fa-arrow-left"></i> Back to Dashboard</a></li>
+                <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Blueprint Editor -->
+    <div class="dashboard">
+        <div class="blueprint-container">
+            <div class="blueprint-header">
+                <h2><i class="fas fa-map"></i> Interactive Blueprint Editor</h2>
+                <div style="display: flex; gap: 1rem;">
+                    <select id="blueprintSelector" class="btn" style="min-width: 200px;">
+                        <option value="">Select blueprint...</option>
+                    </select>
+                    <button class="btn btn-success" onclick="blueprintEditor.saveBlueprint()">
+                        <i class="fas fa-save"></i> Save Blueprint
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="blueprint-stats">
+                <div class="stat-box">
+                    <span class="value" id="totalCameras">0</span>
+                    <span class="label">Total Cameras</span>
+                </div>
+                <div class="stat-box">
+                    <span class="value" id="totalAreas">0</span>
+                    <span class="label">Defined Areas</span>
+                </div>
+                <div class="stat-box">
+                    <span class="value" id="onlineCameras">0</span>
+                    <span class="label">Online Cameras</span>
+                </div>
+                <div class="stat-box">
+                    <span class="value" id="coverage">0%</span>
+                    <span class="label">Coverage</span>
+                </div>
+            </div>
+
+            <!-- Upload Zone -->
+            <div class="upload-zone" id="uploadZone">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h3>Upload Blueprint Image</h3>
+                <p>Drag and drop or click to select</p>
+                <small>Supports: PNG, JPG, PDF (Max 10MB)</small>
+                <input type="file" id="blueprintFile" accept=".png,.jpg,.jpeg,.pdf" style="display: none;">
+            </div>
+
+            <!-- Toolbar -->
+            <div class="blueprint-toolbar">
+                <button class="tool-btn active" data-tool="select">
+                    <i class="fas fa-mouse-pointer"></i> Select
+                </button>
+                <button class="tool-btn" data-tool="camera">
+                    <i class="fas fa-video"></i> Add Camera
+                </button>
+                <button class="tool-btn" data-tool="area">
+                    <i class="fas fa-draw-polygon"></i> Draw Area
+                </button>
+                <button class="tool-btn" data-tool="delete">
+                    <i class="fas fa-eraser"></i> Delete
+                </button>
+                <button class="tool-btn" onclick="blueprintEditor.canvas.clear()">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
+
+            <!-- Main Editor -->
+            <div style="display: grid; grid-template-columns: 1fr 300px; gap: 2rem;">
+                <!-- Canvas -->
+                <div class="canvas-wrapper">
+                    <canvas id="blueprintCanvas"></canvas>
+                    <div class="canvas-controls">
+                        <button class="canvas-control-btn"
+                            onclick="blueprintEditor.canvas.setZoom(blueprintEditor.canvas.getZoom() * 1.1); blueprintEditor.canvas.renderAll();"
+                            title="Zoom In">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="canvas-control-btn"
+                            onclick="blueprintEditor.canvas.setZoom(blueprintEditor.canvas.getZoom() * 0.9); blueprintEditor.canvas.renderAll();"
+                            title="Zoom Out">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="canvas-control-btn"
+                            onclick="blueprintEditor.canvas.setZoom(1); blueprintEditor.canvas.renderAll();"
+                            title="Reset Zoom">
+                            <i class="fas fa-compress"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div>
+                    <!-- Areas List -->
+                    <div class="sidebar" style="margin-bottom: 1.5rem;">
+                        <h3><i class="fas fa-layer-group"></i> Areas (<span id="areaCount">0</span>)</h3>
+                        <ul class="area-list" id="areaList">
+                            <li style="text-align: center; color: #6b7280; padding: 2rem;">
+                                <i class="fas fa-info-circle"></i><br>
+                                No areas defined yet
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Cameras List -->
+                    <div class="sidebar">
+                        <h3><i class="fas fa-video"></i> Cameras (<span id="cameraCount">0</span>)</h3>
+                        <ul class="camera-list" id="cameraList">
+                            <li style="text-align: center; color: #6b7280; padding: 2rem;">
+                                <i class="fas fa-info-circle"></i><br>
+                                No cameras placed yet
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Heatmap Controls -->
+        <div class="heatmap-controls">
+            <h3><i class="fas fa-fire"></i> Heatmap Visualization</h3>
+            <div class="heatmap-type-selector">
+                <button class="heatmap-type-btn active" data-type="violations">
+                    <i class="fas fa-exclamation-triangle"></i> Violation Density
+                </button>
+                <button class="heatmap-type-btn" data-type="time-based">
+                    <i class="fas fa-clock"></i> Time-based Risk
+                </button>
+                <button class="heatmap-type-btn" data-type="camera-status">
+                    <i class="fas fa-video-slash"></i> Camera Status
+                </button>
+            </div>
+
+            <div class="heatmap-legend">
+                <span style="font-weight: 600;">Intensity:</span>
+                <div style="flex: 1;">
+                    <div class="legend-gradient"></div>
+                    <div class="legend-labels">
+                        <span>Low</span>
+                        <span>Medium</span>
+                        <span>High</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                <button class="btn btn-primary" onclick="loadHeatmap()">
+                    <i class="fas fa-sync"></i> Load Heatmap
+                </button>
+                <button class="btn" onclick="clearHeatmap()">
+                    <i class="fas fa-times"></i> Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Area Modal -->
+    <div class="area-modal" id="areaModal">
+        <div class="modal-content-blueprint">
+            <div class="modal-header-blueprint">
+                <h3><i class="fas fa-layer-group"></i> Define Area</h3>
+                <button class="close-modal" onclick="document.getElementById('areaModal').classList.remove('active')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="areaForm">
+                <div class="form-group">
+                    <label for="areaName">Area Name</label>
+                    <input type="text" id="areaName" required placeholder="e.g., Crane Area">
+                </div>
+                <div class="form-group">
+                    <label for="areaType">Area Type</label>
+                    <select id="areaType" required>
+                        <option value="">Select type...</option>
+                        <option value="Material Storage">Material Storage</option>
+                        <option value="Cement Mixing Zone">Cement Mixing Zone</option>
+                        <option value="Electrical Zone">Electrical Zone</option>
+                        <option value="Crane Area">Crane Area</option>
+                        <option value="Worker Resting Area">Worker Resting Area</option>
+                        <option value="Lifting Zone">Lifting Zone</option>
+                        <option value="Dangerous Zone">Dangerous Zone</option>
+                        <option value="Main Entrance">Main Entrance</option>
+                        <option value="Exit Gate">Exit Gate</option>
+                        <option value="Assembly Area">Assembly Area</option>
+                        <option value="Loading Dock">Loading Dock</option>
+                        <option value="Machinery Zone">Machinery Zone</option>
+                        <option value="Quality Control">Quality Control</option>
+                        <option value="Office Area">Office Area</option>
+                        <option value="Custom">Custom</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-check"></i> Create Area
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/blueprint-editor.js"></script>
+    <script>
+        // Heatmap functions
+        let currentHeatmapType = 'violations';
+
+        document.querySelectorAll('.heatmap-type-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.heatmap-type-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentHeatmapType = this.dataset.type;
+            });
+        });
+
+        async function loadHeatmap() {
+            if (!blueprintEditor.currentBlueprint) {
+                alert('Please select or create a blueprint first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/blueprints/${blueprintEditor.currentBlueprint._id}/heatmap?type=${currentHeatmapType}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    visualizeHeatmap(data.data, data.type);
+                }
+            } catch (error) {
+                console.error('Heatmap error:', error);
+                alert('Failed to load heatmap');
+            }
+        }
+
+        function visualizeHeatmap(data, type) {
+            // Clear existing heatmap layers
+            blueprintEditor.canvas.getObjects().forEach(obj => {
+                if (obj.isHeatmap) {
+                    blueprintEditor.canvas.remove(obj);
+                }
+            });
+
+            if (type === 'violations') {
+                data.forEach(area => {
+                    if (area.coordinates && area.coordinates.length > 0) {
+                        const color = getHeatmapColor(area.intensity);
+                        const polygon = new fabric.Polygon(area.coordinates, {
+                            fill: color,
+                            opacity: 0.5,
+                            selectable: false,
+                            evented: false,
+                            isHeatmap: true
+                        });
+                        blueprintEditor.canvas.add(polygon);
+                    }
+                });
+            } else if (type === 'camera-status') {
+                // Overlay camera status colors
+                data.forEach(camera => {
+                    const color = camera.status === 'online' ? '#10b981' :
+                        camera.status === 'offline' ? '#ef4444' : '#f59e0b';
+
+                    const circle = new fabric.Circle({
+                        left: camera.position.x - 25,
+                        top: camera.position.y - 25,
+                        radius: 25,
+                        fill: color,
+                        opacity: 0.3,
+                        selectable: false,
+                        evented: false,
+                        isHeatmap: true
+                    });
+                    blueprintEditor.canvas.add(circle);
+                });
+            }
+
+            blueprintEditor.canvas.renderAll();
+        }
+
+        function getHeatmapColor(intensity) {
+            // Green -> Yellow -> Red gradient
+            if (intensity < 0.33) {
+                return `rgba(16, 185, 129, ${intensity * 3})`;
+            } else if (intensity < 0.66) {
+                return `rgba(251, 191, 36, ${intensity})`;
+            } else {
+                return `rgba(239, 68, 68, ${intensity})`;
+            }
+        }
+
+        function clearHeatmap() {
+            blueprintEditor.canvas.getObjects().forEach(obj => {
+                if (obj.isHeatmap) {
+                    blueprintEditor.canvas.remove(obj);
+                }
+            });
+            blueprintEditor.canvas.renderAll();
+        }
+
+        // Update stats periodically
+        setInterval(() => {
+            document.getElementById('totalCameras').textContent = blueprintEditor.cameras.length;
+            document.getElementById('totalAreas').textContent = blueprintEditor.areas.length;
+            document.getElementById('cameraCount').textContent = blueprintEditor.cameras.length;
+            document.getElementById('areaCount').textContent = blueprintEditor.areas.length;
+
+            const online = blueprintEditor.cameras.filter(c => c.status === 'online').length;
+            document.getElementById('onlineCameras').textContent = online;
+        }, 1000);
+    </script>
+</body>
+
+</html>

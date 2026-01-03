@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Dashboard - SafetyWatch</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .quick-action-btn {
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: transform 0.2s;
+      text-align: center;
+    }
+
+    .quick-action-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .quick-action-btn i {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <i class="fas fa-hard-hat"></i>
+        <span>SafetyWatch</span>
+      </div>
+      <ul class="navbar-nav">
+        <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <h1>Manager Dashboard</h1>
+      <div class="user-info">
+        <i class="fas fa-user-tie" style="font-size: 2rem; color: var(--success-color);"></i>
+        <div>
+          <strong id="userName">Loading...</strong>
+          <p style="margin: 0; font-size: 0.9rem; color: #6b7280;" id="userEmail"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button class="quick-action-btn" onclick="openRecordModal()">
+        <i class="fas fa-plus-circle"></i>
+        Record Violation
+      </button>
+      <button class="quick-action-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"
+        onclick="loadViolations()">
+        <i class="fas fa-sync"></i>
+        Refresh Data
+      </button>
+      <button class="quick-action-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"
+        onclick="viewTeamStats()">
+        <i class="fas fa-chart-bar"></i>
+        Team Statistics
+      </button>
+      <button class="quick-action-btn" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"
+        onclick="viewEmployees()">
+        <i class="fas fa-users"></i>
+        View Employees
+      </button>
+    </div>
+
+    <!-- Team Overview Stats -->
+    <div class="stats-grid">
+      <div class="stat-card primary">
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="teamSize">0</h3>
+          <p>Team Members</p>
+        </div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="teamViolations">0</h3>
+          <p>Team Violations</p>
+        </div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="teamSafetyScore">0</h3>
+          <p>Avg Safety Score</p>
+        </div>
+      </div>
+      <div class="stat-card danger">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="pendingActions">0</h3>
+          <p>Pending Actions</p>
+        </div>
+      </div>
+    </div>
+
+              <th>Employee</th>
+              <th>Violation Type</th>
+              <th>Location</th>
+              <th>Severity</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="violationsTableBody">
+            <tr>
+              <td colspan="7" class="text-center">
+                <div class="spinner"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Team Members Table -->
+    <div class="table-container" style="margin-top: 2rem; display: none;" id="teamMembersSection">
+      <div class="table-header">
+        <h2>Team Members</h2>
+        <button class="btn btn-primary" onclick="hideEmployees()">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Employee ID</th>
+              <th>Position</th>
+              <th>Safety Score</th>
+              <th>Total Violations</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="teamMembersBody">
+            <tr>
+              <td colspan="6" class="text-center">
+                <div class="spinner"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Record Violation Modal -->
+  <div id="recordModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Record Safety Violation</h2>
+        <span class="close" onclick="closeRecordModal()">&times;</span>
+      </div>
+      <div id="alertContainer"></div>
+      <form id="recordForm">
+        <div class="form-group">
+          <label for="employeeSelect">Select Employee</label>
+          <select id="employeeSelect" required>
+            <option value="">-- Select Employee --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="violationType">Violation Type</label>
+          <select id="violationType" required>
+            <option value="">-- Select Type --</option>
+            <option value="helmet">Missing Helmet</option>
+            <option value="safety_jacket">Missing Safety Jacket</option>
+            <option value="gloves">Missing Gloves</option>
+            <option value="boots">Missing Safety Boots</option>
+            <option value="goggles">Missing Goggles</option>
+            <option value="posture">Improper Posture</option>
+            <option value="risky_area">Risky Area Entry</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="severity">Severity</label>
+          <select id="severity" required>
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+
+        <!-- Blueprint and Camera Selection -->
+        <div class="form-group">
+          <label>Blueprint/Location</label>
+          <select id="blueprintSelect" onchange="loadBlueprintCameras()">
+            <option value="">Select location...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Camera ID (from alert)</label>
+          <select id="cameraSelect" onchange="updateAreaFromCamera()">
+            <option value="">Select camera...</option>
+          </select>
+          <small>Select the camera ID from the AI alert</small>
+        </div>
+
+        <div class="form-group">
+          <label>Detection Area</label>
+          <input type="text" id="detectionArea" readonly placeholder="Auto-filled based on camera">
+        </div>
+
+        <div class="form-group">
+          <label>Camera Location Preview</label>
+          <canvas id="miniBlueprint" width="400" height="300"
+            style="width: 100%; border: 1px solid #ddd; border-radius: 4px; background: #f9fafb;"></canvas>
+        </div>
+
+        <div class="form-group">
+          <label for="location">Location Address</label>
+          <input type="text" id="location" required>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-primary" onclick="getCurrentLocation()">
+            <i class="fas fa-map-marker-alt"></i> Get Current Location
+          </button>
+        </div>
+        <input type="hidden" id="latitude">
+        <input type="hidden" id="longitude">
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success" style="width: 100%;">
+          Record Violation
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Assign Violation Modal -->
+  <div id="assignModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Assign Violation to Employee</h2>
+        <span class="close" onclick="closeAssignModal()">&times;</span>
+      </div>
+      <div class="form-group">
+        <label for="assignEmployeeSelect">Select Employee</label>
+        <select id="assignEmployeeSelect" required>
+          <option value="">-- Select Employee --</option>
+        </select>
+        <input type="hidden" id="assignViolationId" />
+      </div>
+      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <button type="button" class="btn btn-primary" onclick="assignViolation()" style="flex: 1;">
+          Assign
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="closeAssignModal()" style="flex: 1;">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/manager.js"></script>
+  <script src="/js/manager-blueprint.js"></script>
+</body>
+
+</html>

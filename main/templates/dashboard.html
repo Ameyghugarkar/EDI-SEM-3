@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety Manager Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Safety Violation Dashboard</h1>
+            <p>Real-time monitoring of safety compliance</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="card stat-card">
+                <h3>Total Violations</h3>
+                <p class="stat-value" id="total-count">0</p>
+            </div>
+            <div class="card stat-card">
+                <h3>Recent Alert</h3>
+                <p class="stat-value" id="recent-time">-</p>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card table-card">
+                <h2>Recent Violations</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Time</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="violation-table">
+                        <!-- Rows will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card preview-card">
+                <h2>Evidence Preview</h2>
+                <div id="image-container">
+                    <p class="placeholder-text">Select a violation to view evidence</p>
+                    <img id="evidence-img" src="" alt="Violation Evidence" style="display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fetchViolations() {
+            fetch('/api/violations')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('violation-table');
+                    tableBody.innerHTML = '';
+                    
+                    document.getElementById('total-count').innerText = data.length;
+                    if (data.length > 0) {
+                        document.getElementById('recent-time').innerText = data[0].timestamp.split('_')[1].replace(/-/g, ':');
+                    }
+
+                    data.forEach(violation => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${violation.id}</td>
+                            <td>${violation.timestamp}</td>
+                            <td><span class="badge danger">${violation.violation_type}</span></td>
+                            <td><button onclick="viewImage('${violation.image_path}')">View</button></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+        }
+
+        function viewImage(path) {
+            const img = document.getElementById('evidence-img');
+            const container = document.getElementById('image-container');
+            const placeholder = container.querySelector('.placeholder-text');
+            
+            // The path stored in DB is like "violations/violation_...jpg"
+            // We need to strip "violations/" because the route is /violations/<filename>
+            // Actually, the route is /violations/<path:filename>, so passing the full path might work if we adjust the route or the path here.
+            // Let's adjust the path here to match the route /violations/<filename>
+            // The DB path is relative to the script, e.g., "violations/violation_2023...jpg"
+            // The Flask route serves from the 'violations' folder.
+            
+            const filename = path.split('/').pop(); 
+            img.src = `/violations/${filename}`;
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+        }
+
+        // Poll every 2 seconds
+        setInterval(fetchViolations, 2000);
+        fetchViolations();
+    </script>
+</body>
+</html>

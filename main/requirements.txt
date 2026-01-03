@@ -1,0 +1,10 @@
+ultralytics==8.3.214
+opencv-python==4.8.1.78
+numpy==1.26.4
+torch>=2.0.0
+torchvision>=0.15.0
+matplotlib
+pandas
+tqdm
+pyyaml
+requests>=2.31.0

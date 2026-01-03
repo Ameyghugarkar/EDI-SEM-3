@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - SafetyWatch</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .password-strength {
+      margin-top: 0.5rem;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      width: 0;
+      transition: all 0.3s;
+      border-radius: 2px;
+    }
+
+    .strength-weak {
+      width: 33%;
+      background: linear-gradient(90deg, #ef4444, #f87171);
+    }
+
+    .strength-medium {
+      width: 66%;
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    }
+
+    .strength-strong {
+      width: 100%;
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+
+    .password-hint {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      color: #6b7280;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .role-badge.employee {
+      background: var(--primary-gradient);
+      color: white;
+    }
+
+    .role-badge.manager {
+      background: var(--success-gradient);
+      color: white;
+    }
+
+    .role-badge.admin {
+      background: var(--danger-gradient);
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <i class="fas fa-hard-hat"></i>
+        <span>SafetyWatch</span>
+      </div>
+      <ul class="navbar-nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/signup">Sign Up</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Signup Section -->
+  <section class="login-section">
+    <div class="form-container">
+      <h2 class="text-center">🚀 Create Your Account</h2>
+      <p class="text-center" style="color: #6b7280; margin-bottom: 2rem;">
+        Join SafetyWatch to monitor workplace safety
+      </p>
+
+      <div id="alertContainer"></div>
+
+      <form id="signupForm">
+        <div class="form-group">
+          <label for="role">I am a</label>
+          <select id="role" name="role" required>
+            <option value="">-- Select Role --</option>
+            <option value="employee">👷 Employee</option>
+            <option value="manager">👔 Manager</option>
+            <option value="admin">🛡️ Administrator</option>
+          </select>
+        </div>
+
+        <div id="roleBadge" style="text-align: center; display: none;"></div>
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" required placeholder="John Doe">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required placeholder="john@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" required placeholder="+1234567890">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required placeholder="Min. 6 characters">
+          <div class="password-strength">
+            <div class="password-strength-bar" id="strengthBar"></div>
+          </div>
+          <div class="password-hint" id="passwordHint">Password strength: <span id="strengthText">-</span></div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Re-enter password">
+        </div>
+
+        <!-- Employee-specific fields -->
+        <div id="employeeFields" style="display: none;">
+          <div class="form-group">
+            <label for="employeeId">Employee ID</label>
+            <input type="text" id="employeeId" name="employeeId" placeholder="EMP001">
+            <small style="color: #6b7280;">Leave blank to auto-generate</small>
+          </div>
+
+          <div class="form-group">
+            <label for="department">Department</label>
+            <select id="department" name="department">
+              <option value="">-- Select Department --</option>
+              <option value="Manufacturing">Manufacturing</option>
+              <option value="Construction">Construction</option>
+              <option value="Warehouse">Warehouse</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Quality Control">Quality Control</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="position">Position</label>
+            <input type="text" id="position" name="position" placeholder="e.g., Machine Operator">
+          </div>
+
+          <div class="form-group">
+            <label for="dateOfJoining">Date of Joining</label>
+            <input type="date" id="dateOfJoining" name="dateOfJoining">
+          </div>
+        </div>
+
+        <!-- Manager-specific fields -->
+        <div id="managerFields" style="display: none;">
+          <div class="form-group">
+            <label for="managerDepartment">Department</label>
+            <select id="managerDepartment" name="managerDepartment">
+              <option value="">-- Select Department --</option>
+              <option value="Manufacturing">Manufacturing</option>
+              <option value="Construction">Construction</option>
+              <option value="Warehouse">Warehouse</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Quality Control">Quality Control</option>
+              <option value="Safety">Safety Department</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Admin-specific fields -->
+        <div id="adminFields" style="display: none;">
+          <div class="form-group">
+            <small
+              style="color: #6b7280; display: flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, rgba(250, 112, 154, 0.1), rgba(254, 225, 64, 0.1)); padding: 1rem; border-radius: 12px; border-left: 4px solid var(--danger-color);">
+              <i class="fas fa-info-circle"></i> Administrator accounts have full system access
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="terms" required>
+            <span>I agree to the <a href="#" style="color: var(--primary-color); font-weight: 600;">Terms &
+                Conditions</a></span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          <i class="fas fa-user-plus"></i> Create Account
+        </button>
+
+        <p class="text-center mt-1">
+          Already have an account? <a href="/login" style="color: var(--primary-color); font-weight: bold;">Login
+            here</a>
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 SafetyWatch. All rights reserved. | Making workplaces safer with AI 🚀</p>
+  </footer>
+
+  <script src="/js/signup.js"></script>
+  <script>
+    // Password strength indicator
+    const passwordInput = document.getElementById('password');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+
+    passwordInput.addEventListener('input', function () {
+      const password = this.value;
+      const strength = calculatePasswordStrength(password);
+
+      strengthBar.className = 'password-strength-bar';
+
+      if (strength === 0) {
+        strengthBar.style.width = '0';
+        strengthText.textContent = '-';
+      } else if (strength <= 2) {
+        strengthBar.classList.add('strength-weak');
+        strengthText.textContent = 'Weak';
+        strengthText.style.color = '#ef4444';
+      } else if (strength <= 3) {
+        strengthBar.classList.add('strength-medium');
+        strengthText.textContent = 'Medium';
+        strengthText.style.color = '#f59e0b';
+      } else {
+        strengthBar.classList.add('strength-strong');
+        strengthText.textContent = 'Strong';
+        strengthText.style.color = '#10b981';
+      }
+    });
+
+    function calculatePasswordStrength(password) {
+      let strength = 0;
+      if (password.length >= 6) strength++;
+      if (password.length >= 10) strength++;
+      if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+      if (/\d/.test(password)) strength++;
+      if (/[^a-zA-Z\d]/.test(password)) strength++;
+      return strength;
+    }
+
+    // Role badge display
+    const roleSelect = document.getElementById('role');
+    const roleBadge = document.getElementById('roleBadge');
+
+    roleSelect.addEventListener('change', function () {
+      const role = this.value;
+      if (role) {
+        const roleNames = {
+          'employee': '👷 Employee',
+          'manager': '👔 Manager',
+          'admin': '🛡️ Administrator'
+        };
+        roleBadge.innerHTML = `<span class="role-badge ${role}">Selected: ${roleNames[role]}</span>`;
+        roleBadge.style.display = 'block';
+      } else {
+        roleBadge.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+
+</html>
